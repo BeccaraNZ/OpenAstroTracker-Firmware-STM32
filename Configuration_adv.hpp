@@ -621,6 +621,8 @@
             #undef SUPPORT_SERIAL_CONTROL
         #endif
         #define SUPPORT_SERIAL_CONTROL 0
+    #elif BOARD == 2001
+    // Just here to avoid erroring out
     #else
         #error "Debugging not supported on this platform"
     #endif

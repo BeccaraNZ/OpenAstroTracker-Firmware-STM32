@@ -248,6 +248,9 @@
     #include "boards/AVR_MKS_GEN_L_V2/pins_MKS_GEN_L_V2.h"
 #elif (BOARD == BOARD_AVR_MKS_GEN_L_V21)
     #include "boards/AVR_MKS_GEN_L_V21/pins_MKS_GEN_L_V21.h"
+#elif (BOARD == BOARD_STM32_ROBIN_NANO_V3_1)
+    #include "boards/STM32_MKS_RBNANO_V3_1/pins_MKS_RBNANO_V3_1.h"
+    #define Serial Serial1
 #endif
 
 #include "Configuration_adv.hpp"

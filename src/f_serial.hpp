@@ -18,6 +18,10 @@ void serialLoop()
     processSerialData();
     #endif
 
+    #ifdef STM32F4
+    processSerialData();
+    #endif
+
     #if (WIFI_ENABLED == 1)
     wifiControl.loop();
     #endif

@@ -9,6 +9,8 @@
 
 #if defined ESP32
 // We don't support ESP32 boards in interrupt mode
+#elif defined STM32F4
+// We don't support ESP32 boards in interrupt mode
 #elif defined __AVR_ATmega2560__  // Arduino Mega
     #define USE_TIMER_1 true
     #define USE_TIMER_2 true
@@ -23,6 +25,8 @@ POP_NO_WARNINGS
 #endif
 
 #if defined(ESP32)
+
+#elif defined STM32F4
 
 #elif defined __AVR_ATmega2560__
 

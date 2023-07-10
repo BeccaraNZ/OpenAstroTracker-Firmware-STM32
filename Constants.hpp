@@ -19,6 +19,10 @@
 // ESP32 based boards
 #define BOARD_ESP32_ESP32DEV 1001
 
+// STM32 Boards
+
+#define BOARD_STM32_ROBIN_NANO_V3_1 2001
+
 /**
  * Supported display types. Use one of these values for DISPLAY_TYPE configuration matching your used display.
  * 

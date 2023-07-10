@@ -6,10 +6,17 @@
 PUSH_NO_WARNINGS
     #if BOARD < 1000
         #include "avr8-stub.h"
+    #elif BOARD == 2001
+    // Allow STM32 Boards to debug
     #else
         #error "Debugging not supported on this platform"
     #endif
 POP_NO_WARNINGS
+#endif
+
+#ifdef STM32F4
+    #include <FreeRTOS.h>
+    #include <task.h>
 #endif
 
 #include "InterruptCallback.hpp"
@@ -70,7 +77,19 @@ void IRAM_ATTR stepperControlTask(void *payload)
         vTaskDelay(1);  // 1 ms 	// This will limit max stepping rate to 1 kHz
     }
 }
+#elif defined(STM32F4)
 
+TaskHandle_t StepperTaskHandle;
+    void stepperControlTask(void *pvParameters)
+    {
+        Mount *mountCopy = static_cast<Mount *>(pvParameters);
+  
+          for (;;)
+            {
+            mountCopy->interruptLoop();
+            vTaskDelay(pdMS_TO_TICKS(1)); // 1 ms delay
+    }
+}
 #else
 // This is the callback function for the timer interrupt on ATMega platforms.
 // It should do very minimal work, only calling Mount::interruptLoop() to step the stepper motors as needed.
@@ -95,9 +114,12 @@ void setup()
     #if BOARD < 1000
     debug_init();  // Setup avr-stub
     breakpoint();  // Set a breakpoint as soon as possible
+    #elif BOARD == 2001
+    // Just here to avoid erroring out
     #else
         #error "Debugging not supported on this platform"
     #endif
+    
 #else
     Serial.begin(SERIAL_BAUDRATE);
     #if DEBUG_LEVEL > 0 && DEBUG_SEPARATE_SERIAL == 1
@@ -410,6 +432,12 @@ void setup()
                             2,                   // Priority (2 is higher than 1)
                             &StepperTask,        // The location that receives the thread id
                             0);                  // The core to run this on
+#elif defined STM32F4
+  // Create the stepperControlTask
+  xTaskCreate(stepperControlTask, "StepperTask", configMINIMAL_STACK_SIZE, &mount, configMAX_PRIORITIES - 1, &StepperTaskHandle);
+  
+  // Start the FreeRTOS scheduler
+  vTaskStartScheduler();
 
 #else
     // 2 kHz updates (higher frequency interferes with serial communications and complete messes up OATControl communications)
